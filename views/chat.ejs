@@ -1,0 +1,53 @@
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript">
+	var socket = io.connect();
+
+	socket.on("connect", function() {
+		socket.emit("addUser", "<%= nickname %>");
+	});
+	
+	socket.on("redirectBack", function() {
+		alert("Name already in use. Please use another nickname");
+		history.go(-1);
+	});
+	
+	socket.on("updateConnectedUsers", function(connectedUsers) {
+		$("#chat-users").html("<div>Connected Users:</div>");
+		$.each(connectedUsers, function(key, val) {
+			$("#chat-users").append(val + "<br />");
+		});
+	});
+	
+	socket.on("updateConversation", function(nickname, data) {
+		$("#chat-box").append("<b>" + nickname + ":</b> " + data + "<br />");
+	});
+		
+	$(function() {
+		$("#send-btn").click(function() {
+			var chatMessage = $("#chat-message").val();
+			
+			if ($.trim(chatMessage) === "")
+			{
+				alert("Please type in a message");
+			}
+			else
+			{
+				$("#chat-message").val("");
+				socket.emit("sendMessage", "<%= nickname %>", chatMessage);
+			}
+		});
+	});
+</script>
+
+<div class="chat-wrapper" style="width: 798px; margin: 0 auto; border: solid silver 1px;">
+	<div id="chat-box" class="chat-box" style="width: 599px; height: 500px; border-right: solid silver 1px; float: left;"><%= chatMessages %></div>
+	<div id="chat-users" class="chat-users" style="float: left;">
+		Loading list of connected users
+	</div>
+	<br style="clear: left;" />
+</div>
+<div class="chat-box-input" style="width: 800px; margin: 0 auto;">
+	<textarea id="chat-message" style="width: 100%; height: 100px;"></textarea>
+	<input type="button" id="send-btn" value="Send" />
+</div>

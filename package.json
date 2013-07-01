@@ -1,0 +1,11 @@
+{
+	"name": "express-chat",
+	"version": "0.0.1",
+	"description": "Online chat interface utilizing express",
+	"dependencies": {
+		"express": "",
+		"ejs": "",
+		"superagent": "",
+		"socket.io": ""
+	}
+}
